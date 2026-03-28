@@ -1,0 +1,55 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score
+
+# Sample dataset (reviews)
+data = {
+    'text': [
+        "I love this product",
+        "This is amazing",
+        "Very bad experience",
+        "I hate this",
+        "Best purchase ever",
+        "Worst product",
+        "Really good",
+        "Not satisfied"
+    ],
+    'label': [1, 1, 0, 0, 1, 0, 1, 0]  # 1=Positive, 0=Negative
+}
+
+df = pd.DataFrame(data)
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    df['text'], df['label'], test_size=0.25, random_state=42
+)
+
+# Convert text to numbers
+vectorizer = CountVectorizer()
+X_train_vec = vectorizer.fit_transform(X_train)
+X_test_vec = vectorizer.transform(X_test)
+
+# Train model
+model = MultinomialNB()
+model.fit(X_train_vec, y_train)
+
+# Predict
+y_pred = model.predict(X_test_vec)
+
+# Accuracy
+print("Accuracy:", accuracy_score(y_test, y_pred))
+
+# Test with new sentence
+sample = ["I really love this"]
+sample_vec = vectorizer.transform(sample)
+prediction = model.predict(sample_vec)
+
+if prediction[0] == 1:
+    print("Sentiment: Positive")
+else:
+    print("Sentiment: Negative")
+OUTPUT :
+Accuracy: 0.75
+Sentiment: Positive
